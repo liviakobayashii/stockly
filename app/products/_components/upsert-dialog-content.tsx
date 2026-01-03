@@ -6,31 +6,34 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/app/_components/ui/input"
 import { NumericFormat } from "react-number-format";
 import { useForm } from "react-hook-form";
-import { createProductSchema, CreateProductSchema } from "@/app/_actions/product/create-product/schema";
+import { upsertProductSchema, UpsertProductSchema } from "@/app/_actions/product/upsert-product/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createProduct } from "@/app/_actions/product/create-product";
+import { upsertProduct } from "@/app/_actions/product/upsert-product";
 import { Button } from "@/app/_components/ui/button"
 
 interface UpsertProductDialogContentProps {
+    defaultValues?: UpsertProductSchema;
     onSuccess?: () => void;
 }
 
 
-const UpsertProductDialogContent = ({ onSuccess }: UpsertProductDialogContentProps) => {
+const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductDialogContentProps) => {
 
-    const form = useForm<CreateProductSchema>({
+    const form = useForm<UpsertProductSchema>({
         shouldUnregister: true, // Quando fecha o dialog, limpa os dados do formulário
-        resolver: zodResolver(createProductSchema),
-        defaultValues: {
+        resolver: zodResolver(upsertProductSchema),
+        defaultValues: defaultValues ?? {
             name: "",
             price: 0,
             stock: 1,
         }
     })
 
-    const onSubmit = async (data: CreateProductSchema) => {
+    const isEditing = !!defaultValues
+
+    const onSubmit = async (data: UpsertProductSchema) => {
         try {
-            await createProduct(data)
+            await upsertProduct({ ...data, id: defaultValues?.id })
             onSuccess?.()
         } catch (error) {
             console.error(error)
@@ -41,8 +44,8 @@ const UpsertProductDialogContent = ({ onSuccess }: UpsertProductDialogContentPro
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <DialogHeader>
-                        <DialogTitle>Criar Produto</DialogTitle>
-                        <DialogDescription>Insira as informações abaixo</DialogDescription>
+                        <DialogTitle>{isEditing ? "Editar" : "Criar"} Produto</DialogTitle>
+                        <DialogDescription>{isEditing ? "Edite" : "Insira"} as informações abaixo</DialogDescription>
                     </DialogHeader>
                     <FormField
                         control={form.control}
