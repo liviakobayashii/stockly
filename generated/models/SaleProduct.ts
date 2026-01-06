@@ -301,7 +301,7 @@ export type SaleProductCreateInput = {
   quantity: number
   createAt?: Date | string
   updatedAt?: Date | string
-  sale: Prisma.SaleCreateNestedOneWithoutProductsInput
+  sale: Prisma.SaleCreateNestedOneWithoutSaleProductsInput
   product: Prisma.ProductCreateNestedOneWithoutSaleProductsInput
 }
 
@@ -321,7 +321,7 @@ export type SaleProductUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sale?: Prisma.SaleUpdateOneRequiredWithoutProductsNestedInput
+  sale?: Prisma.SaleUpdateOneRequiredWithoutSaleProductsNestedInput
   product?: Prisma.ProductUpdateOneRequiredWithoutSaleProductsNestedInput
 }
 
@@ -503,7 +503,7 @@ export type SaleProductCreateWithoutProductInput = {
   quantity: number
   createAt?: Date | string
   updatedAt?: Date | string
-  sale: Prisma.SaleCreateNestedOneWithoutProductsInput
+  sale: Prisma.SaleCreateNestedOneWithoutSaleProductsInput
 }
 
 export type SaleProductUncheckedCreateWithoutProductInput = {
@@ -613,7 +613,7 @@ export type SaleProductUpdateWithoutProductInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   createAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  sale?: Prisma.SaleUpdateOneRequiredWithoutProductsNestedInput
+  sale?: Prisma.SaleUpdateOneRequiredWithoutSaleProductsNestedInput
 }
 
 export type SaleProductUncheckedUpdateWithoutProductInput = {
