@@ -10,6 +10,9 @@ import { upsertProductSchema, UpsertProductSchema } from "@/app/_actions/product
 import { zodResolver } from "@hookform/resolvers/zod";
 import { upsertProduct } from "@/app/_actions/product/upsert-product";
 import { Button } from "@/app/_components/ui/button"
+import { useAction } from "next-safe-action/hooks"
+import { toast } from "sonner"
+import { flattenValidationErrors } from "next-safe-action"
 
 interface UpsertProductDialogContentProps {
     defaultValues?: UpsertProductSchema;
@@ -18,6 +21,17 @@ interface UpsertProductDialogContentProps {
 
 
 const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductDialogContentProps) => {
+
+    const { execute: executeUpsertProduct, status } = useAction(upsertProduct, {
+        onSuccess: () => {
+            onSuccess?.()
+            toast.success("Produto salvo com sucesso!");
+        },
+        onError: ({ error: { validationErrors, serverError } }) => {
+            const flattenedErrors = flattenValidationErrors(validationErrors);
+            toast.error(serverError ?? flattenedErrors.formErrors[0]);
+        },
+    })
 
     const form = useForm<UpsertProductSchema>({
         shouldUnregister: true, // Quando fecha o dialog, limpa os dados do formulário
@@ -31,14 +45,10 @@ const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductD
 
     const isEditing = !!defaultValues
 
-    const onSubmit = async (data: UpsertProductSchema) => {
-        try {
-            await upsertProduct({ ...data, id: defaultValues?.id })
-            onSuccess?.()
-        } catch (error) {
-            console.error(error)
-        }
+    const onSubmit = (data: UpsertProductSchema) => {
+        executeUpsertProduct({ ...data, id: defaultValues?.id })
     }
+
     return (
         <DialogContent>
             <Form {...form}>
@@ -108,8 +118,8 @@ const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductD
                         <DialogClose asChild>
                             <Button type="reset" variant="secondary">Cancelar</Button>
                         </DialogClose>
-                        <Button type="submit" disabled={form.formState.isSubmitting}>
-                            {form.formState.isSubmitting && (
+                        <Button type="submit" disabled={status === "executing"}>
+                            {status === "executing" && (
                                 <Loader2Icon className="animate-spin" size={16} />
                             )}
                             Salvar

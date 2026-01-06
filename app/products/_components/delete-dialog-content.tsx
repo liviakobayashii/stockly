@@ -1,3 +1,5 @@
+"use client"
+
 import { deleteProduct } from "@/app/_actions/product/delete-product";
 import {
     AlertDialogAction,
@@ -9,6 +11,9 @@ import {
     AlertDialogTitle,
 } from "@/app/_components/ui/alert-dialog"
 import { toast } from "sonner";
+import { Loader2Icon } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { flattenValidationErrors } from "next-safe-action";
 
 interface DeleteProductDialogContentProps {
     productId: string;
@@ -16,14 +21,18 @@ interface DeleteProductDialogContentProps {
 
 const DeleteProductDialogContent = ({ productId }: DeleteProductDialogContentProps) => {
 
-    const handleContinueClick = async () => {
-        try {
-            await deleteProduct({ id: productId })
+    const { execute: executeDeleteProduct, status } = useAction(deleteProduct, {
+        onSuccess: () => {
             toast.success("Produto excluído com sucesso!")
-        } catch (error) {
-            console.error(error)
-            toast.error("Ocorreu um erro ao excluir o produto.")
+        },
+        onError: ({ error: { validationErrors, serverError } }) => {
+            const flattenedErrors = flattenValidationErrors(validationErrors);
+            toast.error(serverError ?? flattenedErrors.formErrors[0]);
         }
+    })
+
+    const handleContinueClick = () => {
+        executeDeleteProduct({ id: productId })
     }
 
     return (
@@ -36,7 +45,12 @@ const DeleteProductDialogContent = ({ productId }: DeleteProductDialogContentPro
             </AlertDialogHeader>
             <AlertDialogFooter>
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction onClick={handleContinueClick}>Continuar</AlertDialogAction>
+                <AlertDialogAction onClick={handleContinueClick} disabled={status === "executing"}>
+                    {status === "executing" && (
+                        <Loader2Icon className="animate-spin" size={16} />
+                    )}
+                    Continuar
+                </AlertDialogAction>
             </AlertDialogFooter>
         </AlertDialogContent>
 

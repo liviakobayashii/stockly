@@ -38,6 +38,8 @@ import { z } from "zod";
 import SalesTableDropdownMenu from "./table-dropdown-menu";
 import { createSale } from "@/app/_actions/sale/create-sale";
 import { toast } from "sonner";
+import { useAction } from "next-safe-action/hooks";
+import { flattenValidationErrors } from "next-safe-action";
 
 const formSchema = z.object({
     productId: z.string().uuid({
@@ -51,7 +53,7 @@ type FormSchema = z.infer<typeof formSchema>;
 interface UpsertSheetContentProps {
     products: Product[];
     productOptions: ComboboxOption[];
-    setIsOpen?: Dispatch<SetStateAction<boolean>>;
+    setSheetIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 interface SelectedProduct {
@@ -64,11 +66,22 @@ interface SelectedProduct {
 const UpsertSheetContent = ({
     products,
     productOptions,
-    setIsOpen
+    setSheetIsOpen,
 }: UpsertSheetContentProps) => {
     const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
         [],
     );
+    const { execute: executeCreateSale } = useAction(createSale, {
+        onError: ({ error: { validationErrors, serverError } }) => {
+            const flattenedErrors = flattenValidationErrors(validationErrors);
+            toast.error(serverError ?? flattenedErrors.formErrors[0]);
+        },
+        onSuccess: () => {
+            toast.success("Venda realizada com sucesso.");
+            setSheetIsOpen(false);
+        },
+    });
+
     const form = useForm<FormSchema>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -134,22 +147,14 @@ const UpsertSheetContent = ({
             return currentProducts.filter((product) => product.id !== productId);
         });
     };
-
     const onSubmitSale = async () => {
-        try {
-            await createSale({
-                products: selectedProducts.map((product) => ({
-                    id: product.id,
-                    quantity: product.quantity,
-                }))
-            })
-            toast.success("Venda realizada com sucesso!");
-            setIsOpen(false);
-        } catch (error) {
-            console.error("Erro ao realizar venda.");
-        }
-    }
-
+        executeCreateSale({
+            products: selectedProducts.map((product) => ({
+                id: product.id,
+                quantity: product.quantity,
+            })),
+        });
+    };
     return (
         <SheetContent className="!max-w-[700px]">
             <SheetHeader>
@@ -238,13 +243,15 @@ const UpsertSheetContent = ({
                     </TableRow>
                 </TableFooter>
             </Table>
-            <SheetFooter className="mt-6">
-                <Button className="w-full gap-2"
+
+            <SheetFooter className="pt-6">
+                <Button
+                    className="w-full gap-2"
                     disabled={selectedProducts.length === 0}
                     onClick={onSubmitSale}
                 >
                     <CheckIcon size={20} />
-                    Finalizar Venda
+                    Finalizar venda
                 </Button>
             </SheetFooter>
         </SheetContent>

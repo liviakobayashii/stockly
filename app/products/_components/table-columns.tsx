@@ -37,7 +37,7 @@ export const productTableColumns: ColumnDef<Product>[] = [
         header: "Status",
         cell: (row) => {
             const product = row.row.original
-            const label = getStatusLabel(product.status)
+            const label = getStatusLabel(product.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK")
             return (
                 <Badge variant={label === "Em Estoque" ? "default" : "outline"} className="gap-1.5">
                     <CircleIcon size={14} className={`${label === "Em Estoque" ? "fill-primary-foreground" : "fill-destructive-foreground"}`} />
