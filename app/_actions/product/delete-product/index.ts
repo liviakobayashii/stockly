@@ -12,4 +12,5 @@ export const deleteProduct = actionClient
             where: { id }
         })
         revalidatePath("/products")
+        revalidatePath("/")
     })
