@@ -72,7 +72,5 @@ export const upsertSale = actionClient
                 });
             }
         });
-        revalidatePath("/products");
-        revalidatePath("/sales");
-        revalidatePath("/")
+        revalidatePath("/", "layout")
     });
