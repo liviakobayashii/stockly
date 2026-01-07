@@ -5,8 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -19,7 +18,7 @@ model Product {
   name         String
   price        Decimal       @db.Decimal(10, 2)
   stock        Int
-  createAt     DateTime      @default(now())
+  createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   saleProducts SaleProduct[]
 }
@@ -27,7 +26,7 @@ model Product {
 model Sale {
   id           String        @id @default(uuid())
   date         DateTime
-  createAt     DateTime      @default(now())
+  createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   saleProducts SaleProduct[]
 }
@@ -40,6 +39,6 @@ model SaleProduct {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   unitPrice Decimal  @db.Decimal(10, 2)
   quantity  Int
-  createAt  DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

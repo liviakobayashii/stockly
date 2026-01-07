@@ -20,7 +20,7 @@ const CreateSaleButton = (props: CreateSaleButtonProps) => {
             <SheetTrigger asChild>
                 <Button>Nova Venda</Button>
             </SheetTrigger>
-            <UpsertSheetContent setIsOpen={setSheetIsOpen} {...props}
+            <UpsertSheetContent setSheetIsOpen={setSheetIsOpen} {...props}
             />
         </Sheet>
 

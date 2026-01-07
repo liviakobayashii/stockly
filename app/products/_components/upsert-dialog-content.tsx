@@ -1,68 +1,86 @@
-"use client"
+"use client";
 
-import { DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/app/_components/ui/dialog"
-import { Loader2Icon } from "lucide-react"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/_components/ui/form"
-import { Input } from "@/app/_components/ui/input"
-import { NumericFormat } from "react-number-format";
-import { useForm } from "react-hook-form";
-import { upsertProductSchema, UpsertProductSchema } from "@/app/_actions/product/upsert-product/schema";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { upsertProduct } from "@/app/_actions/product/upsert-product";
-import { Button } from "@/app/_components/ui/button"
-import { useAction } from "next-safe-action/hooks"
-import { toast } from "sonner"
-import { flattenValidationErrors } from "next-safe-action"
+import {
+    upsertProductSchema,
+    UpsertProductSchema,
+} from "@/app/_actions/product/upsert-product/schema";
+import { Button } from "@/app/_components/ui/button";
+import {
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/app/_components/ui/dialog";
+import {
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+    Form,
+} from "@/app/_components/ui/form";
+import { Input } from "@/app/_components/ui/input";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2Icon } from "lucide-react";
+import { useAction } from "next-safe-action/hooks";
+import { Dispatch, SetStateAction } from "react";
+import { useForm } from "react-hook-form";
+import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 
 interface UpsertProductDialogContentProps {
     defaultValues?: UpsertProductSchema;
-    onSuccess?: () => void;
+    setDialogIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-
-const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductDialogContentProps) => {
-
-    const { execute: executeUpsertProduct, status } = useAction(upsertProduct, {
+const UpsertProductDialogContent = ({
+    defaultValues,
+    setDialogIsOpen,
+}: UpsertProductDialogContentProps) => {
+    const { execute: executeUpsertProduct } = useAction(upsertProduct, {
         onSuccess: () => {
-            onSuccess?.()
-            toast.success("Produto salvo com sucesso!");
+            toast.success("Produto salvo com sucesso.");
+            setDialogIsOpen(false);
         },
-        onError: ({ error: { validationErrors, serverError } }) => {
-            const flattenedErrors = flattenValidationErrors(validationErrors);
-            toast.error(serverError ?? flattenedErrors.formErrors[0]);
+        onError: () => {
+            toast.error("Ocorreu um erro ao salvar o produto.");
         },
-    })
-
+    });
     const form = useForm<UpsertProductSchema>({
-        shouldUnregister: true, // Quando fecha o dialog, limpa os dados do formulário
+        shouldUnregister: true,
         resolver: zodResolver(upsertProductSchema),
         defaultValues: defaultValues ?? {
+            id: "",
             name: "",
             price: 0,
             stock: 1,
-        }
-    })
-
-    const isEditing = !!defaultValues
+        },
+    });
 
     const onSubmit = (data: UpsertProductSchema) => {
-        executeUpsertProduct({ ...data, id: defaultValues?.id })
-    }
+        executeUpsertProduct({ ...data, id: defaultValues?.id });
+    };
+
+    const isEditing = !!defaultValues;
 
     return (
         <DialogContent>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                     <DialogHeader>
-                        <DialogTitle>{isEditing ? "Editar" : "Criar"} Produto</DialogTitle>
-                        <DialogDescription>{isEditing ? "Edite" : "Insira"} as informações abaixo</DialogDescription>
+                        <DialogTitle>{isEditing ? "Editar" : "Criar"} produto</DialogTitle>
+                        <DialogDescription>Insira as informações abaixo</DialogDescription>
                     </DialogHeader>
+
                     <FormField
                         control={form.control}
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Nome do Produto</FormLabel>
+                                <FormLabel>Nome</FormLabel>
                                 <FormControl>
                                     <Input placeholder="Digite o nome do produto" {...field} />
                                 </FormControl>
@@ -106,20 +124,26 @@ const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductD
                                     <Input
                                         type="number"
                                         placeholder="Digite o estoque do produto"
-                                        value={field.value}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
+                                        {...field}
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button type="reset" variant="secondary">Cancelar</Button>
+                            <Button variant="secondary" type="reset">
+                                Cancelar
+                            </Button>
                         </DialogClose>
-                        <Button type="submit" disabled={status === "executing"}>
-                            {status === "executing" && (
+                        <Button
+                            type="submit"
+                            disabled={form.formState.isSubmitting}
+                            className="gap-1.5"
+                        >
+                            {form.formState.isSubmitting && (
                                 <Loader2Icon className="animate-spin" size={16} />
                             )}
                             Salvar
@@ -128,8 +152,7 @@ const UpsertProductDialogContent = ({ defaultValues, onSuccess }: UpsertProductD
                 </form>
             </Form>
         </DialogContent>
+    );
+};
 
-    )
-}
-
-export default UpsertProductDialogContent
+export default UpsertProductDialogContent;
