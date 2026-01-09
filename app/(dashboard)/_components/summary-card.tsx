@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 
 export const SummaryCardIcon = ({ children }: { children: ReactNode }) => {
     return (
-        <div className="h-9 w-9 flex items-center justify-center rounded-md bg-emerald-500 text-emerald-500 bg-opacity-10 mb-2">
+        <div className="h-9 w-9 flex items-center justify-center rounded-md bg-slate-500 text-slate-500 bg-opacity-10 mb-2">
             {children}
         </div>
     )
