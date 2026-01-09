@@ -38,7 +38,7 @@ interface SalesTableDropdownMenuProps {
 const SalesTableDropdownMenu = ({ sale, products, productOptions }: SalesTableDropdownMenuProps) => {
     const [upsertIsOpen, setUpsertIsOpen] = useState(false)
 
-    const { execute } = useAction(deleteSale, {
+    const { execute, status } = useAction(deleteSale, {
         onSuccess: () => {
             toast.success("Venda deletada com sucesso!")
         },
