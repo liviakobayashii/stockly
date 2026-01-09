@@ -31,7 +31,7 @@ import {
 import { formatCurrency } from "@/app/_helpers/currency";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, PlusIcon } from "lucide-react";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import UpsertSaleTableDropdownMenu from "./upsert-table-dropdown-menu";
@@ -45,7 +45,9 @@ const formSchema = z.object({
     productId: z.string().uuid({
         message: "O produto é obrigatório.",
     }),
-    quantity: z.coerce.number().int().positive(),
+    quantity: z.number().int().positive({
+        message: "Quantidade deve ser maior que zero.",
+    }),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -56,6 +58,7 @@ interface SelectedProduct {
     quantity: number;
 }
 interface UpsertSheetContentProps {
+    isOpen: boolean;
     saleId?: string;
     products: ProductDto[];
     productOptions: ComboboxOption[];
@@ -64,6 +67,7 @@ interface UpsertSheetContentProps {
 }
 
 const UpsertSheetContent = ({
+    isOpen,
     saleId,
     products,
     productOptions,
@@ -91,6 +95,18 @@ const UpsertSheetContent = ({
             quantity: 1,
         },
     });
+
+    useEffect(() => {
+        if (!isOpen) {
+            form.reset()
+            setSelectedProducts([])
+        }
+    }, [form, isOpen])
+
+    useEffect(() => {
+        setSelectedProducts(defaultSelectedProducts ?? [])
+    }, [defaultSelectedProducts])
+
     const onSubmit = (data: FormSchema) => {
         const selectedProduct = products.find(
             (product) => product.id === data.productId,
@@ -197,7 +213,10 @@ const UpsertSheetContent = ({
                                     <Input
                                         type="number"
                                         placeholder="Digite a quantidade"
-                                        {...field}
+                                        value={field.value}
+                                        onChange={(e) =>
+                                            field.onChange(e.target.valueAsNumber)
+                                        }
                                     />
                                 </FormControl>
                                 <FormMessage />
