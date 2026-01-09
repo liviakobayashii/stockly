@@ -1,4 +1,9 @@
-import { Product } from "@prisma/client"
+import {
+    AlertDialog,
+    AlertDialogTrigger,
+} from "@/app/_components/ui/alert-dialog";
+import { Button } from "@/app/_components/ui/button";
+import { Dialog, DialogTrigger } from "@/app/_components/ui/dialog";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -6,30 +11,29 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/app/_components/ui/dropdown-menu"
-import { Button } from "@/app/_components/ui/button"
+} from "@/app/_components/ui/dropdown-menu";
 import {
-    AlertDialog,
-    AlertDialogTrigger,
-} from "@/app/_components/ui/alert-dialog"
-import DeleteProductDialogContent from "./delete-dialog-content"
-import { Dialog } from "@/app/_components/ui/dialog"
-import { DialogTrigger } from "@radix-ui/react-dialog"
-import UpsertProductDialogContent from "./upsert-dialog-content"
-import { ClipboardCopyIcon, EditIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react"
-import { useState } from "react"
-
+    MoreHorizontalIcon,
+    ClipboardCopyIcon,
+    EditIcon,
+    TrashIcon,
+} from "lucide-react";
+import { useState } from "react";
+import DeleteProductDialogContent from "./delete-dialog-content";
+import UpsertProductDialogContent from "./upsert-dialog-content";
+import { ProductDto } from "@/app/_data-access/product/get-products";
 
 interface ProductTableDropdownMenuProps {
-    product: Product
+    product: ProductDto;
 }
 
-const ProductTableDropdownMenu = ({ product }: ProductTableDropdownMenuProps) => {
-    const [editDialogOpen, setEditDialogOpen] = useState(false);
-
+const ProductTableDropdownMenu = ({
+    product,
+}: ProductTableDropdownMenuProps) => {
+    const [editDialogOpen, setEditDialogIsOpen] = useState(false);
     return (
         <AlertDialog>
-            <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+            <Dialog open={editDialogOpen} onOpenChange={setEditDialogIsOpen}>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost">
@@ -39,7 +43,10 @@ const ProductTableDropdownMenu = ({ product }: ProductTableDropdownMenuProps) =>
                     <DropdownMenuContent>
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="gap-1.5" onClick={() => navigator.clipboard.writeText(product.id)}>
+                        <DropdownMenuItem
+                            className="gap-1.5"
+                            onClick={() => navigator.clipboard.writeText(product.id)}
+                        >
                             <ClipboardCopyIcon size={16} />
                             Copiar ID
                         </DropdownMenuItem>
@@ -64,13 +71,12 @@ const ProductTableDropdownMenu = ({ product }: ProductTableDropdownMenuProps) =>
                         price: Number(product.price),
                         stock: product.stock,
                     }}
-                    setDialogIsOpen={setEditDialogOpen}
+                    setDialogIsOpen={setEditDialogIsOpen}
                 />
                 <DeleteProductDialogContent productId={product.id} />
             </Dialog>
         </AlertDialog>
+    );
+};
 
-
-    )
-}
-export default ProductTableDropdownMenu
+export default ProductTableDropdownMenu;
