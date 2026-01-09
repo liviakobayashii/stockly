@@ -9,6 +9,9 @@ export const productTableColumns: ColumnDef<ProductDto>[] = [
     {
         accessorKey: "name",
         header: "Produto",
+        meta: {
+            className: "max-w-[150px] truncate",
+        },
     },
     {
         accessorKey: "price",
@@ -24,6 +27,9 @@ export const productTableColumns: ColumnDef<ProductDto>[] = [
     {
         accessorKey: "stock",
         header: "Estoque",
+        meta: {
+            className: "hidden md:table-cell",
+        },
     },
     {
         accessorKey: "status",
@@ -32,6 +38,9 @@ export const productTableColumns: ColumnDef<ProductDto>[] = [
             return (
                 <ProductStatusBadge status={product.status} />
             );
+        },
+        meta: {
+            className: "hidden md:table-cell",
         },
     },
     {

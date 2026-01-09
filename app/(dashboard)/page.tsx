@@ -18,7 +18,7 @@ import MostSoldProducts, { MostSoldProductsSkeleton } from "./_components/most-s
 
 const Home = async () => {
   return (
-    <div className="m-8 flex w-full flex-col space-y-8 rounded-lg">
+    <div className="m-4 flex flex-col space-y-4 rounded-lg md:m-8 md:space-y-8">
       <Header>
         <HeaderLeft>
           <HeaderSubtitle>Visão geral dos dados</HeaderSubtitle>
@@ -26,7 +26,7 @@ const Home = async () => {
         </HeaderLeft>
       </Header>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:gap-4 lg:gap-6 md:grid-cols-2">
         <Suspense fallback={<SummaryCardSkeleton />}>
           <TotalRevenueCard />
         </Suspense>
@@ -34,7 +34,7 @@ const Home = async () => {
           <TodayRevenueCard />
         </Suspense>
       </div>
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:gap-4 lg:gap-6 md:grid-cols-3">
         <Suspense fallback={<SummaryCardSkeleton />}>
           <TotalSalesCard />
         </Suspense>
@@ -46,7 +46,7 @@ const Home = async () => {
         </Suspense>
       </div>
 
-      <div className="grid min-h-0 grid-cols-[minmax(0,2.5fr),minmax(0,1fr)] gap-6">
+      <div className="grid min-h-0 grid-cols-1 gap-6 md:gap-4 lg:gap-6 xl:grid-cols-[minmax(0,2.5fr),minmax(0,1fr)]">
         <Suspense
           fallback={
             <Skeleton className="bg-white p-6">

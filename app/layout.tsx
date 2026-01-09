@@ -3,6 +3,7 @@ import "./globals.css";
 import Sidebar from "./_components/sidebar";
 import { Inter } from 'next/font/google'
 import { Toaster } from "./_components/ui/sonner";
+import MobileSidebar from "./_components/mobile-sidebar";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,9 +25,20 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased`}
       >
-        <div className="flex h-full">
-          <Sidebar />
-          {children}
+        <div className="flex h-full flex-col md:flex-row">
+          <div className="hidden h-full w-64 md:block">
+            <Sidebar />
+          </div>
+
+          <div className="flex items-center justify-between border-b bg-white p-4 md:hidden">
+            <MobileSidebar />
+            <span className="text-xl font-bold">STOCKLY</span>
+            <div className="w-10"></div>
+          </div>
+
+          <div className="flex-1 overflow-auto">
+            {children}
+          </div>
           <Toaster />
         </div>
       </body>

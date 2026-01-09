@@ -9,14 +9,14 @@ export const SummaryCardIcon = ({ children }: { children: ReactNode }) => {
 }
 export const SummaryCardTitle = ({ children }: { children: ReactNode }) => {
     return (
-        <p className="text-sm font-medium text-slate-500">
+        <p className="text-sm md:text-xs lg:text-sm font-medium text-slate-500">
             {children}
         </p>
     )
 }
 export const SummaryCardValue = ({ children }: { children: ReactNode }) => {
     return (
-        <p className="text-2xl font-semibold text-slate-900">
+        <p className="text-2xl md:text-xl lg:text-2xl font-semibold text-slate-900">
             {children}
         </p>
     )
@@ -24,7 +24,7 @@ export const SummaryCardValue = ({ children }: { children: ReactNode }) => {
 
 export const SummaryCard = ({ children }: { children: ReactNode }) => {
     return (
-        <div className="bg-white rounded-xl p-6">
+        <div className="bg-white rounded-xl p-6 md:p-4 lg:p-6">
             {children}
         </div>
     )

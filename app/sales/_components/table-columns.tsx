@@ -16,10 +16,18 @@ export const saleTableColumns: ColumnDef<SaleTableColumn>[] = [
     {
         accessorKey: "productNames",
         header: "Produtos",
+        meta: {
+            className: "max-w-[150px] truncate sm:max-w-[300px]",
+        },
     },
     {
         accessorKey: "totalProducts",
-        header: "Quantidade de Produtos",
+        header: () => (
+            <div>
+                <span className="lg:hidden">Quantidade</span>
+                <span className="hidden lg:inline">Quantidade de Produtos</span>
+            </div>
+        ),
     },
     {
         header: "Valor Total",
@@ -36,6 +44,9 @@ export const saleTableColumns: ColumnDef<SaleTableColumn>[] = [
                 original: { date },
             },
         }) => new Date(date).toLocaleDateString("pt-BR"),
+        meta: {
+            className: "hidden md:table-cell",
+        },
     },
     {
         header: "Ações",
