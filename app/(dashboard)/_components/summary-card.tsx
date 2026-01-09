@@ -29,3 +29,16 @@ export const SummaryCard = ({ children }: { children: ReactNode }) => {
         </div>
     )
 }
+
+
+export const SummaryCardSkeleton = () => {
+    return (
+        <div className="rounded-xl bg-white p-6">
+            <div className="space-y-2">
+                <div className="h-9 w-9 rounded-md bg-gray-200" />
+                <div className="h-5 w-[86.26px] rounded-md bg-gray-200" />
+                <div className="h-8 w-48 rounded-md bg-gray-200" />
+            </div>
+        </div>
+    );
+};
